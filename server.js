@@ -1,13 +1,13 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
-const {MongoClient, ObjectId} = require('mongodb')
+const { MongoClient, ObjectId } = require('mongodb')
 const PORT = process.env.PORT || 8000
 require('dotenv').config()
 
 let db,
     dbConnectionStr = process.env.DB_STRING,
-    dbName = 'sample+mflix',
+    dbName = 'sample_mflix',
     collection
 
 MongoClient.connect(dbConnectionStr)
@@ -25,7 +25,7 @@ app.get('/search', async (req, res) => {
     try{
         let result = await collection.aggregate([
             {
-                '$Search': {
+                '$search': {
                     'autocomplete': {
                         'query': `${req.query.query}`,
                         'path': 'title',
@@ -39,6 +39,7 @@ app.get('/search', async (req, res) => {
         ]).toArray()
         res.send(result)
     }catch(err){
+        console.log(err)
         res.status(500).send({message: err.message})
     }
 })
@@ -50,6 +51,7 @@ app.get('/get/:id', async (req, res) => {
         })
         res.send(result)
     }catch(err){
+        console.log(err)
         res.status(500).send({message: err.message})
     }
 })
